@@ -32,6 +32,7 @@ header h1 {
     letter-spacing: 2px;
     text-transform: uppercase;
     margin: 0;
+    font-size: 1.5rem;
 }
 
 .nav-button {
@@ -48,64 +49,58 @@ header h1 {
     background-color: #fff;
 }
 
-.dashboard-grid {
+.leaderboard-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 2rem;
 }
 
-.character-card {
+.leaderboard {
     background-color: #2a2a2a;
     border: 1px solid #444;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 255, 221, 0.1);
-    overflow: hidden;
+    padding: 1.5rem;
 }
 
-.card-header {
-    background-color: #333;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #00ffdd;
-}
-
-.character-name { margin: 0; color: #fff; font-size: 1.25rem; }
-
-.character-level {
-    background-color: #00ffdd;
-    color: #1a1a1a;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-weight: 700;
-}
-
-.card-body { padding: 1rem; }
-
-.character-email {
-    color: #888;
-    font-size: 0.8rem;
-    margin-top: -0.5rem;
-    margin-bottom: 1rem;
-    text-align: center;
-}
-
-.character-vitals {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #444;
-}
-
-.card-body h3 {
+.leaderboard h2 {
     color: #00ffdd;
+    text-align: center;
     margin-top: 0;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
     text-transform: uppercase;
-    font-size: 1rem;
+    letter-spacing: 1px;
 }
 
-.stats-list { list-style: none; padding: 0; margin: 0; }
-.stats-list li { padding: 0.25rem 0; }
+.leaderboard-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.leaderboard-list li {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+.leaderboard-list li:last-child {
+    border-bottom: none;
+}
+
+.rank {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #00ffdd;
+    width: 40px;
+}
+
+.name {
+    flex-grow: 1;
+    font-size: 1.1rem;
+}
+
+.score {
+    font-weight: bold;
+    color: #fff;
+}

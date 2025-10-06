@@ -14,8 +14,14 @@ class DashboardController extends AbstractController
     {
         $characters = $characterRepository->findAll();
 
+        // Sort for "Challenges Completed" leaderboard in PHP
+        usort($characters, fn($a, $b) => count($b->getRedeemedTokens()) <=> count($a->getRedeemedTokens()));
+        $byEfficiency = array_slice($characters, 0, 10);
+
         return $this->render('dashboard/index.html.twig', [
-            'characters' => $characters,
+            'byReputation' => $characterRepository->findBy([], ['level' => 'DESC'], 10),
+            'byWealth' => $characterRepository->findBy([], ['gold' => 'DESC'], 10),
+            'byEfficiency' => $byEfficiency,
         ]);
     }
 }

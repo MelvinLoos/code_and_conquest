@@ -15,10 +15,11 @@
         <header>
             <a href="{{ path('app_dashboard') }}" class="header-link">
                 <img src="{{ asset('images/favicon.svg') }}" alt="Site Icon">
-                <h1>Netrunner Dashboard</h1>
+                <h1>Netrunner Rankings</h1>
             </a>
             <nav>
-                {% block navigation %}{% endblock %}
+                <a href="{{ path('api_doc') }}" class="nav-button">API Docs</a>
+                <a href="{{ path('app_register') }}" class="nav-button">Register Character</a>
             </nav>
         </header>
 
