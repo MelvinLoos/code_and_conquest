@@ -1,0 +1,13 @@
+framework:
+    rate_limiter:
+        # 10 requests per minute, per API key
+        api_endpoints:
+            policy: 'token_bucket'
+            limit: 10
+            rate: { interval: '1 minute' }
+        
+        # 5 registration attempts per hour, per IP address
+        form_registration:
+            policy: 'token_bucket'
+            limit: 5
+            rate: { interval: '1 hour' }

@@ -9,6 +9,8 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use OpenApi\Attributes as OA;
@@ -79,9 +81,14 @@ class ChallengeController extends AbstractController
         response: 400,
         description: 'Incorrect solution or no active challenge.'
     )]
-    #[OA\Security(name: "Bearer")]
-    public function solveChallenge(#[CurrentUser] Character $character, Request $request, EntityManagerInterface $em): JsonResponse
+    #[Security(name: "Bearer")]
+    public function solveChallenge(#[CurrentUser] Character $character, Request $request, EntityManagerInterface $em, RateLimiterFactory $apiEndpointsLimiter): JsonResponse
     {
+        $limiter = $apiEndpointsLimiter->create($character->getApiKey());
+        if (false === $limiter->consume(1)->isAccepted()) {
+            return $this->json(['message' => 'ICE detected unusual activity. Your connection has been temporarily throttled.'], Response::HTTP_TOO_MANY_REQUESTS);
+        }
+        
         $activeChallenge = $character->getActiveChallenge();
         if (!$activeChallenge) {
             return $this->json(['message' => 'No active mission to solve.'], 400);
