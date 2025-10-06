@@ -45,7 +45,7 @@ class Character implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $energy = null;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $activeChallenge = null;
+    private ?array $activeMission = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastChallengeCompletedAt = null;
@@ -56,6 +56,9 @@ class Character implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $missionBoard = null;
+
     public function __construct()
     {
         $this->level = 1;
@@ -64,6 +67,7 @@ class Character implements UserInterface, PasswordAuthenticatedUserInterface
         $this->stats = [];
         $this->inventory = [];
         $this->redeemedTokens = [];
+        $this->missionBoard = [];
     }
 
     public function getId(): ?int
@@ -155,14 +159,14 @@ class Character implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getActiveChallenge(): ?array
+    public function getactiveMission(): ?array
     {
-        return $this->activeChallenge;
+        return $this->activeMission;
     }
 
-    public function setActiveChallenge(?array $activeChallenge): static
+    public function setactiveMission(?array $activeMission): static
     {
-        $this->activeChallenge = $activeChallenge;
+        $this->activeMission = $activeMission;
 
         return $this;
     }
@@ -215,6 +219,18 @@ class Character implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getMissionBoard(): ?array
+    {
+        return $this->missionBoard;
+    }
+
+    public function setMissionBoard(?array $missionBoard): static
+    {
+        $this->missionBoard = $missionBoard;
 
         return $this;
     }
