@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register Netrunner{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/forms.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="form-container">
+        {{ form_start(registrationForm) }}
+            <div class="form-group">
+                {{ form_label(registrationForm.characterName) }}
+                {{ form_widget(registrationForm.characterName) }}
+                <div class="form-error">{{ form_errors(registrationForm.characterName) }}</div>
+            </div>
+            <div class="form-group">
+                {{ form_label(registrationForm.email) }}
+                {{ form_widget(registrationForm.email) }}
+                <div class="form-error">{{ form_errors(registrationForm.email) }}</div>
+            </div>
+            <button type="submit">Go Online</button>
+        {{ form_end(registrationForm) }}
+    </div>
+{% endblock %}

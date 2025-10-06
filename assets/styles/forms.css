@@ -1,0 +1,40 @@
+.form-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+}
+.form-group { margin-bottom: 1.5rem; }
+label { display: block; margin-bottom: 0.5rem; font-weight: bold; color: #00ffdd; }
+input {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    color: #e0e0e0;
+    border-radius: 4px;
+}
+.form-error ul { list-style: none; padding: 0; margin: 0; }
+.form-error li { color: #ff4d4d; margin-top: 0.25rem; }
+button[type="submit"] {
+    width: 100%;
+    padding: 1rem;
+    background-color: #00ffdd;
+    color: #1a1a1a;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+.success-container {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #2a2a2a;
+    border: 1px solid #00ffdd;
+    border-radius: 8px;
+    text-align: center;
+}
+.success-container a { color: #00ffdd; }

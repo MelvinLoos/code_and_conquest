@@ -1,0 +1,221 @@
+<?php
+
+namespace App\Entity;
+
+use App\Repository\CharacterRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+
+#[ORM\Entity(repositoryClass: CharacterRepository::class)]
+class Character implements UserInterface, PasswordAuthenticatedUserInterface
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $apiKey = null;
+
+    #[Groups(['character:read'])]
+    #[ORM\Column(length: 255)]
+    private ?string $characterName = null;
+
+    #[Groups(['character:read'])]
+    #[ORM\Column]
+    private ?int $level = null;
+
+    #[Groups(['character:read'])]
+    #[ORM\Column]
+    private ?int $gold = null;
+
+    #[Groups(['character:read'])]
+    #[ORM\Column(type: Types::JSON)]
+    private array $stats = [];
+
+    #[Groups(['character:read'])]
+    #[ORM\Column(type: Types::JSON)]
+    private array $inventory = [];
+
+    #[Groups(['character:read'])]
+    #[ORM\Column]
+    private ?int $energy = null;
+
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $activeChallenge = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $lastChallengeCompletedAt = null;
+
+    #[ORM\Column(type: Types::JSON)]
+    private array $redeemedTokens = [];
+
+    #[ORM\Column(length: 255)]
+    private ?string $email = null;
+
+    public function __construct()
+    {
+        $this->level = 1;
+        $this->gold = 10;
+        $this->energy = 100;
+        $this->stats = [];
+        $this->inventory = [];
+        $this->redeemedTokens = [];
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getApiKey(): ?string
+    {
+        return $this->apiKey;
+    }
+
+    public function setApiKey(string $apiKey): static
+    {
+        $this->apiKey = $apiKey;
+
+        return $this;
+    }
+
+    public function getCharacterName(): ?string
+    {
+        return $this->characterName;
+    }
+
+    public function setCharacterName(string $characterName): static
+    {
+        $this->characterName = $characterName;
+
+        return $this;
+    }
+
+    public function getLevel(): ?int
+    {
+        return $this->level;
+    }
+
+    public function setLevel(int $level): static
+    {
+        $this->level = $level;
+
+        return $this;
+    }
+
+    public function getGold(): ?int
+    {
+        return $this->gold;
+    }
+
+    public function setGold(int $gold): static
+    {
+        $this->gold = $gold;
+
+        return $this;
+    }
+
+    public function getStats(): array
+    {
+        return $this->stats;
+    }
+
+    public function setStats(array $stats): static
+    {
+        $this->stats = $stats;
+
+        return $this;
+    }
+
+    public function getInventory(): array
+    {
+        return $this->inventory;
+    }
+
+    public function setInventory(array $inventory): static
+    {
+        $this->inventory = $inventory;
+
+        return $this;
+    }
+
+    public function getEnergy(): ?int
+    {
+        return $this->energy;
+    }
+
+    public function setEnergy(int $energy): static
+    {
+        $this->energy = $energy;
+
+        return $this;
+    }
+
+    public function getActiveChallenge(): ?array
+    {
+        return $this->activeChallenge;
+    }
+
+    public function setActiveChallenge(?array $activeChallenge): static
+    {
+        $this->activeChallenge = $activeChallenge;
+
+        return $this;
+    }
+
+    public function getLastChallengeCompletedAt(): ?\DateTimeImmutable
+    {
+        return $this->lastChallengeCompletedAt;
+    }
+
+    public function setLastChallengeCompletedAt(?\DateTimeImmutable $lastChallengeCompletedAt): static
+    {
+        $this->lastChallengeCompletedAt = $lastChallengeCompletedAt;
+
+        return $this;
+    }
+
+    public function getRedeemedTokens(): array
+    {
+        return $this->redeemedTokens;
+    }
+
+    public function setRedeemedTokens(array $redeemedTokens): static
+    {
+        $this->redeemedTokens = $redeemedTokens;
+
+        return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return ['ROLE_USER'];
+    }
+    public function eraseCredentials(): void
+    {
+    }
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->apiKey;
+    }
+    public function getPassword(): ?string
+    {
+        return null;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+}

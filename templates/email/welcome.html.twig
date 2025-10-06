@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { background-color: #ffffff; padding: 20px; border-radius: 5px; }
+        .code { background-color: #eee; padding: 10px; font-family: monospace; }
+        .warning { color: #990000; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Net, {{ character.characterName }}!</h1>
+        <p>Your Code & Conquest profile is now active. You can now use your unique Access Key to interact with the game API.</p>
+        <p class="warning"><strong>Important:</strong> This is the only time you will see your key. Store it somewhere safe and do not share it.</p>
+        <p>Your Access Key is:</p>
+        <div class="code">{{ character.apiKey }}</div>
+        <hr>
+        <p>Good luck, Netrunner.</p>
+    </div>
+</body>
+</html>

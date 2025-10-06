@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Netrunner Dashboard{% endblock %}
+
+{% block navigation %}
+    <a href="{{ path('app_register') }}" class="nav-button">Register Character</a>
+{% endblock %}
+
+{% block body %}
+<div class="dashboard-grid">
+    {% for character in characters %}
+        <div class="character-card">
+            <div class="card-header">
+                <h2 class="character-name">{{ character.characterName }}</h2>
+                <div class="character-level">LVL {{ character.level }}</div>
+            </div>
+            <div class="card-body">
+                {% if character.email is defined and character.email is not null %}
+                    <p class="character-email">{{ character.email }}</p>
+                {% endif %}
+                <div class="character-vitals">
+                    <span><strong>Gold:</strong> {{ character.gold }}</span>
+                    <span><strong>Energy:</strong> {{ character.energy }}</span>
+                </div>
+                <h3>Core Stats</h3>
+                <ul class="stats-list">
+                    {% for stat, value in character.stats %}
+                        <li><strong>{{ stat|capitalize }}:</strong> {{ value }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% else %}
+        <p>No Netrunners are currently online.</p>
+    {% endfor %}
+</div>
+{% endblock %}

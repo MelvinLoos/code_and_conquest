@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Registration Complete!{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/forms.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="success-container">
+        <h2>Profile Created!</h2>
+        <p>Your registration is complete. An email containing your secret Access Key has been sent to your @glr.nl address.</p>
+        <p>Check your inbox (and spam folder) to retrieve your key and get started.</p>
+    </div>
+{% endblock %}
