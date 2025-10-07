@@ -20,7 +20,39 @@
                 {{ form_widget(registrationForm.email) }}
                 <div class="form-error">{{ form_errors(registrationForm.email) }}</div>
             </div>
+            <div class="form-group">
+                {{ form_label(registrationForm.characterClass) }}
+                {{ form_widget(registrationForm.characterClass, {'attr': {'onchange': 'showDescription(this)'}}) }}
+                <div class="form-error">{{ form_errors(registrationForm.characterClass) }}</div>
+                
+                <div id="class-descriptions">
+                    {% for key, class in classes %}
+                        <p id="desc-{{ key }}" class="class-description" style="display:none;">{{ class.description }}</p>
+                    {% endfor %}
+                </div>
+            </div>
             <button type="submit">Go Online</button>
         {{ form_end(registrationForm) }}
     </div>
+
+    <script>
+        function showDescription(selectElement) {
+            document.querySelectorAll('.class-description').forEach(el => el.style.display = 'none');
+            
+            const selectedClass = selectElement.value;
+            if (selectedClass) {
+                const descElement = document.getElementById('desc-' + selectedClass);
+                if (descElement) {
+                    descElement.style.display = 'block';
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const select = document.getElementById('{{ registrationForm.characterClass.vars.id }}');
+            if (select) {
+                showDescription(select);
+            }
+        });
+    </script>
 {% endblock %}

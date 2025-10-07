@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Character;
 use App\Form\CharacterRegistrationFormType;
 use App\Repository\CharacterRepository;
+use App\Service\CharacterStatsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,12 +14,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, EntityManagerInterface $em, MailerInterface $mailer, CharacterRepository $characterRepository): Response
+    public function register(Request $request, EntityManagerInterface $em, MailerInterface $mailer, CharacterRepository $characterRepository, CharacterStatsService $statsService, RateLimiterFactory $formRegistrationLimiter): Response
     {
+        $limiter = $formRegistrationLimiter->create($request->getClientIp());
+        if (false === $limiter->consume(1)->isAccepted()) {
+            $this->addFlash('error', 'You have attempted to register too many times. Please try again later.');
+            return $this->redirectToRoute('app_register');
+        }
+
         $character = new Character();
         $form = $this->createForm(CharacterRegistrationFormType::class, $character);
         $form->handleRequest($request);
@@ -35,15 +43,11 @@ class RegistrationController extends AbstractController
             if ($existingCharacter) {
                 $form->get('email')->addError(new FormError('A character has already been created with this email address.'));
             } else {
+                $class = $form->get('characterClass')->getData();
+                $character->setCharacterClass($class);
                 $character->setEmail($normalizedEmail);
                 $character->setApiKey(bin2hex(random_bytes(30)));
-                $character->setStats([
-                    'interface'    => random_int(10, 18),
-                    'analytics'    => random_int(8, 15),
-                    'sysKnowledge' => random_int(8, 15),
-                    'secOps'       => random_int(8, 15),
-                    'peopleSkills' => random_int(8, 15),
-                ]);
+                $character->setStats($statsService->generateStatsForClass($class));
 
                 $em->persist($character);
                 $em->flush();
@@ -63,6 +67,7 @@ class RegistrationController extends AbstractController
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
+            'classes' => $statsService->getAllClassesWithDetails(),
         ], new Response(
             null,
             $form->isSubmitted() && !$form->isValid() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK,

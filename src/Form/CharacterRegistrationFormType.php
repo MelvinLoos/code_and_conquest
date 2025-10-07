@@ -3,7 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Character;
+use App\Service\CharacterStatsService;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,9 +21,6 @@ class CharacterRegistrationFormType extends AbstractType
         $builder
             ->add('characterName', TextType::class, [
                 'label' => 'Netrunner Handle',
-                'constraints' => [
-                    new NotBlank(['message' => 'Please enter your desired handle.']),
-                ],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'School Email Address',
@@ -32,6 +31,14 @@ class CharacterRegistrationFormType extends AbstractType
                         'pattern' => '/^.+@glr\.nl$/i',
                         'message' => 'You must use a valid @glr.nl school email address.',
                     ]),
+                ],
+            ])
+            ->add('characterClass', ChoiceType::class, [
+                'label' => 'Choose Your Archetype',
+                'choices' => CharacterStatsService::getClasses(),
+                'mapped' => false,
+                'constraints' => [
+                    new NotBlank(['message' => 'Please select an archetype.']),
                 ],
             ])
         ;
