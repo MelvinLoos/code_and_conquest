@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Character;
+use App\Entity\PlayerCharacter;
 use App\Form\CharacterRegistrationFormType;
 use App\Repository\CharacterRepository;
 use App\Service\CharacterStatsService;
@@ -27,7 +27,7 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_register');
         }
 
-        $character = new Character();
+        $character = new PlayerCharacter();
         $form = $this->createForm(CharacterRegistrationFormType::class, $character);
         $form->handleRequest($request);
 

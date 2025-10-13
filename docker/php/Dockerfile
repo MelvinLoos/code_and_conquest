@@ -12,7 +12,7 @@ COPY --link \
 RUN apk add --no-cache $PHPIZE_DEPS postgresql-dev
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_pgsql
+RUN docker-php-ext-install pdo pdo_pgsql pdo_mysql
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer

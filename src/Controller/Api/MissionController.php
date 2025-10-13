@@ -2,7 +2,7 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\Character;
+use App\Entity\PlayerCharacter;
 use App\Service\ChallengeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,7 +23,7 @@ class MissionController extends AbstractController
 
     #[Route('', name: 'api_get_missions', methods: ['GET'])]
     /** @OA\Response(response=200, description="Returns the character's current mission board.") @OA\Security(name="Bearer") */
-    public function getMissionBoard(#[CurrentUser] Character $character, ChallengeService $challengeService, EntityManagerInterface $em): JsonResponse
+    public function getMissionBoard(#[CurrentUser] PlayerCharacter $character, ChallengeService $challengeService, EntityManagerInterface $em): JsonResponse
     {
         $missionBoard = $character->getMissionBoard();
 
@@ -56,7 +56,7 @@ class MissionController extends AbstractController
     
     #[Route('/{id}/accept', name: 'api_accept_mission', methods: ['POST'])]
     /** @OA\Response(response=200, description="Accepts a mission from the board.") @OA\Security(name="Bearer") */
-    public function acceptMission(string $id, #[CurrentUser] Character $character, EntityManagerInterface $em): JsonResponse
+    public function acceptMission(string $id, #[CurrentUser] PlayerCharacter $character, EntityManagerInterface $em): JsonResponse
     {
         if ($character->getActiveMission()) {
             return $this->json(['message' => 'You already have an active mission.'], Response::HTTP_CONFLICT);
@@ -85,7 +85,7 @@ class MissionController extends AbstractController
 
     #[Route('/solve', name: 'api_solve_mission', methods: ['POST'])]
     /** @OA\RequestBody(description="The solution to the active mission.", required=true, @OA\JsonContent(type="object", @OA\Property(property="solution", type="any", example="The solution string or number"))) @OA\Response(response=200, description="Correct solution.") @OA\Security(name="Bearer") */
-    public function solveMission(#[CurrentUser] Character $character, Request $request, EntityManagerInterface $em, RateLimiterFactory $apiEndpointsLimiter): JsonResponse
+    public function solveMission(#[CurrentUser] PlayerCharacter $character, Request $request, EntityManagerInterface $em, RateLimiterFactory $apiEndpointsLimiter): JsonResponse
     {
         $limiter = $apiEndpointsLimiter->create($character->getApiKey());
         if (false === $limiter->consume(1)->isAccepted()) {

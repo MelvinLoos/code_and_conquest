@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Entity\Character;
+use App\Entity\PlayerCharacter;
 use App\Service\CharacterStatsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -46,7 +46,7 @@ class CreateCharacterCommand extends Command
             return Command::FAILURE;
         }
 
-        $character = new Character();
+        $character = new PlayerCharacter();
         $character->setCharacterName($name);
         $character->setCharacterClass($class);
         $character->setApiKey(bin2hex(random_bytes(30)));

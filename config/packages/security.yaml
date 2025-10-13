@@ -1,10 +1,10 @@
 security:
     password_hashers:
-        App\Entity\Character: 'auto'
+        App\Entity\PlayerCharacter: 'auto'
     providers:
         app_user_provider:
             entity:
-                class: App\Entity\Character
+                class: App\Entity\PlayerCharacter
                 property: apiKey
     firewalls:
         dev:

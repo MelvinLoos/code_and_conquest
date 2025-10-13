@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Character;
+use App\Entity\PlayerCharacter;
 use App\Service\CharacterStatsService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -47,7 +47,7 @@ class CharacterRegistrationFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Character::class,
+            'data_class' => PlayerCharacter::class,
         ]);
     }
 }

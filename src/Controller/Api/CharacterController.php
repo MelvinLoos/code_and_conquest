@@ -2,7 +2,7 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\Character;
+use App\Entity\PlayerCharacter;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +16,7 @@ use OpenApi\Attributes as OA;
 class CharacterController extends AbstractController
 {
     #[Route('/character', name: 'api_get_character', methods: ['GET'])]
-    public function getCharacter(#[CurrentUser] ?Character $character): JsonResponse
+    public function getCharacter(#[CurrentUser] ?PlayerCharacter $character): JsonResponse
     {
         return $this->json($character, 200, [], ['groups' => 'character:read']);
     }
@@ -35,7 +35,7 @@ class CharacterController extends AbstractController
     #[OA\Response(response: 200, description: 'Character leveled up successfully.')]
     #[OA\Response(response: 400, description: 'Invalid or already used victory token.')]
     #[Security(name: "Bearer")]
-    public function levelUp(#[CurrentUser] Character $character, Request $request, EntityManagerInterface $em): JsonResponse
+    public function levelUp(#[CurrentUser] PlayerCharacter $character, Request $request, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $token = $data['victoryToken'] ?? null;
