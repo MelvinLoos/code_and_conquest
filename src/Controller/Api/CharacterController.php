@@ -40,14 +40,20 @@ class CharacterController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $token = $data['victoryToken'] ?? null;
 
-        if (!$token || !str_starts_with($token, 'VT_')) {
-            return $this->json(['message' => 'Invalid token format.'], 400);
+        if (!$token) {
+            return $this->json(['message' => 'No token provided.'], 400);
         }
 
         $redeemedTokens = $character->getRedeemedTokens();
-        if (in_array($token, $redeemedTokens)) {
-            return $this->json(['message' => 'This token has already been redeemed.'], 400);
+        
+        // Check if token exists in the character's earned tokens array
+        if (!in_array($token, $redeemedTokens)) {
+            return $this->json(['message' => 'Invalid or unearned victory token.'], 400);
         }
+        
+        // Mark this token as used by removing it
+        $redeemedTokens = array_values(array_diff($redeemedTokens, [$token]));
+        $character->setRedeemedTokens($redeemedTokens);
 
         $character->setLevel($character->getLevel() + 1);
         $redeemedTokens[] = $token;

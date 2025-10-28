@@ -104,11 +104,17 @@ class MissionController extends AbstractController
         
         if ($solution === $activeMission['solution']) {
             $rewardGold = rand(50, 150) * (match($difficulty) {'easy' => 1, 'medium' => 2, 'hard' => 4});
-            $victoryToken = 'VT_' . uniqid();
+            $victoryToken = 'VT_' . bin2hex(random_bytes(16)); // More secure token generation
 
             $character->setGold($character->getGold() + $rewardGold);
             $character->setActiveMission(null);
             $character->setLastChallengeCompletedAt(new \DateTimeImmutable());
+            
+            // Store the victory token with the character
+            $earnedTokens = $character->getRedeemedTokens();
+            $earnedTokens[] = $victoryToken;
+            $character->setRedeemedTokens($earnedTokens);
+            
             $em->flush();
 
             return $this->json([
