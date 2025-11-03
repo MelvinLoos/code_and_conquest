@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\PlayerCharacter;
 use App\Service\ChallengeService;
+use App\Service\RealtimeEventService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -243,7 +244,8 @@ class MissionController extends AbstractController
         #[CurrentUser] PlayerCharacter $character,
         Request $request,
         EntityManagerInterface $em,
-        RateLimitingService $rateLimiter
+        RateLimitingService $rateLimiter,
+        RealtimeEventService $realtimeEvents
     ): JsonResponse
     {
         // Check rate limits with progressive penalties
@@ -275,6 +277,9 @@ class MissionController extends AbstractController
             $character->setRedeemedTokens($earnedTokens);
             
             $em->flush();
+
+            // Dispatch real-time event for dashboard updates
+            $realtimeEvents->dispatchMissionComplete($character);
 
             return $this->json([
                 'message' => 'Mission successful! Data acquired.',

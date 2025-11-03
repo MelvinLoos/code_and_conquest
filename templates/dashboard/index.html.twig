@@ -5,12 +5,22 @@
 {% block navigation %}{% endblock %}
 
 {% block body %}
-<div class="leaderboard-container">
+<div class="leaderboard-container" 
+     data-controller="realtime-dashboard"
+     data-realtime-dashboard-reputation-list-target="reputationList"
+     data-realtime-dashboard-wealth-list-target="wealthList"
+     data-realtime-dashboard-efficiency-list-target="efficiencyList">
+    
+    <div class="realtime-status">
+        <div class="status-indicator"></div>
+        <span data-realtime-dashboard-last-update-target="lastUpdate">Real-time updates active</span>
+    </div>
+
     <div class="leaderboard">
         <h2>Top Reputation</h2>
-        <ol class="leaderboard-list">
+        <ol class="leaderboard-list" data-realtime-dashboard-target="reputationList">
             {% for character in byReputation %}
-                <li>
+                <li class="character-{{ character.characterClass }}">
                     <span class="rank">#{{ loop.index }}</span>
                     <span class="name">{{ character.characterName }}</span>
                     <span class="score">LVL {{ character.level }}</span>
@@ -21,9 +31,9 @@
 
     <div class="leaderboard">
         <h2>Top Wealth</h2>
-        <ol class="leaderboard-list">
+        <ol class="leaderboard-list" data-realtime-dashboard-target="wealthList">
             {% for character in byWealth %}
-                 <li>
+                 <li class="character-{{ character.characterClass }}">
                     <span class="rank">#{{ loop.index }}</span>
                     <span class="name">{{ character.characterName }}</span>
                     <span class="score">{{ character.gold }} Credits</span>
@@ -34,9 +44,9 @@
 
     <div class="leaderboard">
         <h2>Top Efficiency</h2>
-        <ol class="leaderboard-list">
+        <ol class="leaderboard-list" data-realtime-dashboard-target="efficiencyList">
             {% for character in byEfficiency %}
-                 <li>
+                 <li class="character-{{ character.characterClass }}">
                     <span class="rank">#{{ loop.index }}</span>
                     <span class="name">{{ character.characterName }}</span>
                     <span class="score">{{ character.redeemedTokens|length }} Missions</span>

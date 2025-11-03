@@ -104,3 +104,76 @@ header h1 {
     font-weight: bold;
     color: #fff;
 }
+
+/* Real-time dashboard styles */
+.realtime-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background-color: #2a2a2a;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #00ff00;
+    margin-right: 0.5rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Update animations */
+.leaderboard-container.updating {
+    box-shadow: 0 0 10px rgba(0, 255, 221, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+.leaderboard-list li.updated {
+    background-color: rgba(0, 255, 221, 0.1);
+    animation: highlight 1s ease-out;
+}
+
+.leaderboard-list li.new-entry {
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes highlight {
+    0% { background-color: rgba(0, 255, 221, 0.3); }
+    100% { background-color: transparent; }
+}
+
+@keyframes slideIn {
+    0% { 
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    100% { 
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Character class styling */
+.character-netrunner .name { color: #00ffdd; }
+.character-data_miner .name { color: #ff6b35; }
+.character-sleuth .name { color: #7b68ee; }
+
+/* Connection status */
+.status-indicator.disconnected {
+    background-color: #ff4444;
+    animation: none;
+}
+
+.realtime-status.disconnected {
+    background-color: #4a2a2a;
+}

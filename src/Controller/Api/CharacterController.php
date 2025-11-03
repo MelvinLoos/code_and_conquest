@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\PlayerCharacter;
 use App\Service\RateLimitingService;
+use App\Service\RealtimeEventService;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -97,7 +98,8 @@ class CharacterController extends AbstractController
         #[CurrentUser] PlayerCharacter $character,
         Request $request,
         EntityManagerInterface $em,
-        RateLimitingService $rateLimiter
+        RateLimitingService $rateLimiter,
+        RealtimeEventService $realtimeEvents
     ): JsonResponse
     {
         // Check rate limits with progressive penalties
@@ -126,6 +128,9 @@ class CharacterController extends AbstractController
         $character->setLevel($character->getLevel() + 1);
 
         $em->flush();
+
+        // Dispatch real-time event for dashboard updates
+        $realtimeEvents->dispatchLevelUp($character);
 
         return $this->json($character, 200, [], ['groups' => 'character:read']);
     }
