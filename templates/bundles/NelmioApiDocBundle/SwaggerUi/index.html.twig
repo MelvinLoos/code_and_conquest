@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ 'API Platform'|trans }}</title>
+    <link rel="shortcut icon" type="image/png" href="{{ asset('favicon.ico') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/nelmioapidoc/swagger-ui/swagger-ui-bundle.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/nelmioapidoc/swagger-ui/swagger-ui-standalone-preset.css') }}" />
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+        body {
+            margin:0;
+            background: #1a1a1a !important;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        /* Custom back button */
+        #custom-back-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: linear-gradient(135deg, #00ffdd, #00ccaa) !important;
+            color: #0a0a0a !important;
+            padding: 0.75rem 1.5rem !important;
+            border: none !important;
+            border-radius: 4px !important;
+            text-decoration: none !important;
+            font-weight: bold !important;
+            font-family: 'Roboto Mono', monospace !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            transition: all 0.3s ease !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+            box-shadow: 0 2px 8px rgba(0, 255, 221, 0.2) !important;
+        }
+        
+        #custom-back-button:hover {
+            background: linear-gradient(135deg, #00ccaa, #009988) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 16px rgba(0, 255, 221, 0.4) !important;
+            color: #0a0a0a !important;
+        }
+        
+        .swagger-ui {
+            background-color: #1a1a1a !important;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="{{ path('app_dashboard') }}" id="custom-back-button">
+        <span>←</span>
+        Back to Dashboard
+    </a>
+
+    <div id="swagger-ui"></div>
+
+    <script src="{{ asset('bundles/nelmioapidoc/swagger-ui/swagger-ui-bundle.js') }}"></script>
+    <script src="{{ asset('bundles/nelmioapidoc/swagger-ui/swagger-ui-standalone-preset.js') }}"></script>
+    <script>
+    window.onload = function() {
+      // Begin Swagger UI call region
+      const ui = SwaggerUIBundle({
+        url: "{{ absolute_url(path('api_doc')) }}.json",
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        plugins: [
+          SwaggerUIBundle.plugins.DownloadUrl
+        ],
+        layout: "StandaloneLayout",
+        validatorUrl: null
+      });
+      // End Swagger UI call region
+    };
+    </script>
+</body>
+</html>
