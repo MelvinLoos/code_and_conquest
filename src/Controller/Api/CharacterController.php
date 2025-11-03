@@ -14,9 +14,32 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use OpenApi\Attributes as OA;
 
 #[Route('/api')]
+#[OA\Tag(name: "Character")]
 class CharacterController extends AbstractController
 {
     #[Route('/character', name: 'api_get_character', methods: ['GET'])]
+    #[OA\Response(
+        response: 200, 
+        description: 'Returns the character information.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'id', type: 'integer', example: 1),
+                new OA\Property(property: 'name', type: 'string', example: 'Neo'),
+                new OA\Property(property: 'characterClass', type: 'string', example: 'netrunner'),
+                new OA\Property(property: 'level', type: 'integer', example: 5),
+                new OA\Property(property: 'gold', type: 'integer', example: 2500),
+                new OA\Property(property: 'energy', type: 'integer', example: 85),
+                new OA\Property(property: 'sysKnowledge', type: 'integer', example: 16),
+                new OA\Property(property: 'analytics', type: 'integer', example: 14),
+                new OA\Property(property: 'interface', type: 'integer', example: 12),
+                new OA\Property(property: 'secOps', type: 'integer', example: 10),
+                new OA\Property(property: 'peopleSkills', type: 'integer', example: 8)
+            ]
+        )
+    )]
+    #[OA\Response(response: 401, description: 'Authentication required - invalid or missing API token.')]
+    #[Security(name: "Bearer")]
     public function getCharacter(#[CurrentUser] ?PlayerCharacter $character): JsonResponse
     {
         return $this->json($character, 200, [], ['groups' => 'character:read']);
@@ -33,8 +56,42 @@ class CharacterController extends AbstractController
             ]
         )
     )]
-    #[OA\Response(response: 200, description: 'Character leveled up successfully.')]
-    #[OA\Response(response: 400, description: 'Invalid or already used victory token.')]
+    #[OA\Response(
+        response: 200, 
+        description: 'Character leveled up successfully.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'id', type: 'integer', example: 1),
+                new OA\Property(property: 'name', type: 'string', example: 'Neo'),
+                new OA\Property(property: 'characterClass', type: 'string', example: 'netrunner'),
+                new OA\Property(property: 'level', type: 'integer', example: 6),
+                new OA\Property(property: 'gold', type: 'integer', example: 2500),
+                new OA\Property(property: 'energy', type: 'integer', example: 85)
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 400, 
+        description: 'Invalid or already used victory token.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'message', type: 'string', example: 'Invalid or unearned victory token.')
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 429, 
+        description: 'Rate limit exceeded.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'message', type: 'string', example: 'Rate limit exceeded. Too many requests.')
+            ]
+        )
+    )]
+    #[OA\Response(response: 401, description: 'Authentication required - invalid or missing API token.')]
     #[Security(name: "Bearer")]
     public function levelUp(
         #[CurrentUser] PlayerCharacter $character,

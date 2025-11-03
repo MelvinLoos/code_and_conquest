@@ -10,19 +10,48 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use OpenApi\Annotations as OA;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
 use App\Service\RateLimitingService;
+use Nelmio\ApiDocBundle\Attribute\Security;
 
 #[Route('/api/missions')]
-/** @OA\Tag(name="Missions") */
+#[OA\Tag(name: "Missions")]
 class MissionController extends AbstractController
 {
     private const ENERGY_COST_TO_REFRESH = 10;
     private const COOLDOWN_MINUTES = 5;
 
     #[Route('', name: 'api_get_missions', methods: ['GET'])]
-    /** @OA\Response(response=200, description="Returns the character's current mission board.") @OA\Security(name="Bearer") */
+    #[OA\Response(
+        response: 200, 
+        description: 'Returns the character\'s current mission board.',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'id', type: 'string', example: 'mission_1'),
+                    new OA\Property(property: 'title', type: 'string', example: 'Data Extraction'),
+                    new OA\Property(property: 'description', type: 'string', example: 'Calculate the sum of encrypted data packets'),
+                    new OA\Property(property: 'difficulty', type: 'string', example: 'easy'),
+                    new OA\Property(property: 'reward', type: 'string', example: '50-150 credits')
+                ]
+            )
+        )
+    )]
+    #[OA\Response(
+        response: 429, 
+        description: 'Rate limit exceeded or insufficient energy.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'message', type: 'string', example: 'System lockout. Your rig is cooling down.')
+            ]
+        )
+    )]
+    #[OA\Response(response: 401, description: 'Authentication required - invalid or missing API token.')]
+    #[Security(name: "Bearer")]
     public function getMissionBoard(
         #[CurrentUser] PlayerCharacter $character,
         ChallengeService $challengeService,
@@ -64,7 +93,65 @@ class MissionController extends AbstractController
     }
     
     #[Route('/{id}/accept', name: 'api_accept_mission', methods: ['POST'])]
-    /** @OA\Response(response=200, description="Accepts a mission from the board.") @OA\Security(name="Bearer") */
+    #[OA\Parameter(
+        name: 'id',
+        description: 'The mission ID to accept',
+        in: 'path',
+        required: true,
+        schema: new OA\Schema(type: 'string')
+    )]
+    #[OA\Response(
+        response: 200, 
+        description: 'Mission accepted successfully.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'message', type: 'string', example: 'Mission accepted. Beginning infiltration sequence.'),
+                new OA\Property(
+                    property: 'mission', 
+                    type: 'object',
+                    properties: [
+                        new OA\Property(property: 'id', type: 'string', example: 'mission_1'),
+                        new OA\Property(property: 'title', type: 'string', example: 'Data Extraction'),
+                        new OA\Property(property: 'description', type: 'string', example: 'Calculate the sum: 15 + 27'),
+                        new OA\Property(property: 'difficulty', type: 'string', example: 'easy')
+                    ]
+                )
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 404, 
+        description: 'Mission not found on board.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'message', type: 'string', example: 'Mission not found on your board.')
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 409, 
+        description: 'Already has an active mission.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'message', type: 'string', example: 'You already have an active mission.')
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 429, 
+        description: 'Rate limit exceeded.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'message', type: 'string', example: 'Rate limit exceeded. Too many requests.')
+            ]
+        )
+    )]
+    #[OA\Response(response: 401, description: 'Authentication required - invalid or missing API token.')]
+    #[Security(name: "Bearer")]
     public function acceptMission(
         string $id,
         #[CurrentUser] PlayerCharacter $character,
@@ -102,7 +189,56 @@ class MissionController extends AbstractController
 
 
     #[Route('/solve', name: 'api_solve_mission', methods: ['POST'])]
-    /** @OA\RequestBody(description="The solution to the active mission.", required=true, @OA\JsonContent(type="object", @OA\Property(property="solution", type="any", example="The solution string or number"))) @OA\Response(response=200, description="Correct solution.") @OA\Security(name="Bearer") */
+    #[OA\RequestBody(
+        description: "The solution to the active mission.",
+        required: true,
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'solution', type: 'mixed', example: 42, description: 'The solution (string, number, or any value depending on mission type)')
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 200, 
+        description: 'Mission completed successfully with rewards.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'message', type: 'string', example: 'Mission successful! Data acquired.'),
+                new OA\Property(
+                    property: 'reward',
+                    type: 'object',
+                    properties: [
+                        new OA\Property(property: 'gold', type: 'integer', example: 150),
+                        new OA\Property(property: 'victoryToken', type: 'string', example: 'VT_a1b2c3d4e5f6')
+                    ]
+                )
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 400, 
+        description: 'Invalid solution or no active mission.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'message', type: 'string', example: 'Trace detected! The solution was incorrect.')
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 429, 
+        description: 'Rate limit exceeded.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'message', type: 'string', example: 'Rate limit exceeded. Too many requests.')
+            ]
+        )
+    )]
+    #[OA\Response(response: 401, description: 'Authentication required - invalid or missing API token.')]
+    #[Security(name: "Bearer")]
     public function solveMission(
         #[CurrentUser] PlayerCharacter $character,
         Request $request,
