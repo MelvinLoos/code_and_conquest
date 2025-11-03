@@ -9,10 +9,10 @@ COPY --link \
     /usr/local/bin/symfony /usr/local/bin/symfony
 
 # Install dependencies for PHP extensions
-RUN apk add --no-cache $PHPIZE_DEPS postgresql-dev
+RUN apk add --no-cache $PHPIZE_DEPS mysql-dev
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_pgsql pdo_mysql
+RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
