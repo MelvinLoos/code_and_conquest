@@ -13,17 +13,21 @@ framework:
                     max_retries: 3
                     multiplier: 2
             failed: 'doctrine://default?queue_name=failed'
-            # sync: 'sync://'
+            sync: 'sync://'
 
         default_bus: messenger.bus.default
 
         buses:
             messenger.bus.default: []
 
+        # Route these messages to the sync transport so they are sent directly
+        # during the request instead of being dispatched to the async queue.
+        # This is useful for environments where you cannot run messenger:consume
+        # (for example a prod server without CLI access).
         routing:
-            Symfony\Component\Mailer\Messenger\SendEmailMessage: async
-            Symfony\Component\Notifier\Message\ChatMessage: async
-            Symfony\Component\Notifier\Message\SmsMessage: async
+            Symfony\Component\Mailer\Messenger\SendEmailMessage: sync
+            Symfony\Component\Notifier\Message\ChatMessage: sync
+            Symfony\Component\Notifier\Message\SmsMessage: sync
 
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
