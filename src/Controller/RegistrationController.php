@@ -22,14 +22,22 @@ class RegistrationController extends AbstractController
     public function register(Request $request, EntityManagerInterface $em, MailerInterface $mailer, CharacterRepository $characterRepository, CharacterStatsService $statsService, RateLimiterFactory $formRegistrationLimiter): Response
     {
         $limiter = $formRegistrationLimiter->create($request->getClientIp());
-        if (false === $limiter->consume(1)->isAccepted()) {
-            $this->addFlash('error', 'You have attempted to register too many times. Please try again later.');
-            return $this->redirectToRoute('app_register');
-        }
 
         $character = new PlayerCharacter();
         $form = $this->createForm(CharacterRegistrationFormType::class, $character);
         $form->handleRequest($request);
+
+        // If the rate limiter blocks this request, render the registration
+        // form with an error message and a 429 status instead of redirecting
+        // back to the same route which caused a redirect loop in some cases.
+        if (false === $limiter->consume(1)->isAccepted()) {
+            $this->addFlash('error', 'You have attempted to register too many times. Please try again later.');
+
+            return $this->render('registration/register.html.twig', [
+                'registrationForm' => $form->createView(),
+                'classes' => $statsService->getAllClassesWithDetails(),
+            ], new Response(null, Response::HTTP_TOO_MANY_REQUESTS));
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $email = $character->getEmail();
