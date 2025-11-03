@@ -1,91 +1,63 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>{{ 'API Platform'|trans }}</title>
-    <link rel="shortcut icon" type="image/png" href="{{ asset('favicon.ico') }}"/>
-    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/nelmioapidoc/swagger-ui/swagger-ui-bundle.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/nelmioapidoc/swagger-ui/swagger-ui-standalone-preset.css') }}" />
+{% extends '@!NelmioApiDoc/SwaggerUi/index.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
     <style>
-        html {
-            box-sizing: border-box;
-            overflow: -moz-scrollbars-vertical;
-            overflow-y: scroll;
-        }
-        *, *:before, *:after {
-            box-sizing: inherit;
-        }
-        body {
-            margin:0;
-            background: #1a1a1a !important;
-            font-family: 'Roboto Mono', monospace;
-        }
-        
         /* Custom back button */
         #custom-back-button {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 9999;
-            background: linear-gradient(135deg, #00ffdd, #00ccaa) !important;
-            color: #0a0a0a !important;
-            padding: 0.75rem 1.5rem !important;
-            border: none !important;
-            border-radius: 4px !important;
-            text-decoration: none !important;
-            font-weight: bold !important;
-            font-family: 'Roboto Mono', monospace !important;
-            text-transform: uppercase !important;
-            letter-spacing: 1px !important;
-            transition: all 0.3s ease !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 0.5rem !important;
-            box-shadow: 0 2px 8px rgba(0, 255, 221, 0.2) !important;
+            background: linear-gradient(135deg, #00ffdd, #00ccaa);
+            color: #0a0a0a;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Roboto Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 255, 221, 0.2);
+            font-size: 14px;
         }
         
         #custom-back-button:hover {
-            background: linear-gradient(135deg, #00ccaa, #009988) !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 6px 16px rgba(0, 255, 221, 0.4) !important;
-            color: #0a0a0a !important;
+            background: linear-gradient(135deg, #00ccaa, #009988);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 255, 221, 0.4);
+            color: #0a0a0a;
+            text-decoration: none;
         }
         
-        .swagger-ui {
-            background-color: #1a1a1a !important;
+        #custom-back-button .back-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        #custom-back-button:hover .back-icon {
+            transform: translateX(-3px);
+        }
+        
+        @media (max-width: 768px) {
+            #custom-back-button {
+                padding: 0.6rem 1.2rem;
+                font-size: 12px;
+                top: 10px;
+                right: 10px;
+            }
         }
     </style>
-</head>
+{% endblock %}
 
-<body>
+{% block header_block %}
     <a href="{{ path('app_dashboard') }}" id="custom-back-button">
-        <span>←</span>
+        <span class="back-icon">←</span>
         Back to Dashboard
     </a>
-
-    <div id="swagger-ui"></div>
-
-    <script src="{{ asset('bundles/nelmioapidoc/swagger-ui/swagger-ui-bundle.js') }}"></script>
-    <script src="{{ asset('bundles/nelmioapidoc/swagger-ui/swagger-ui-standalone-preset.js') }}"></script>
-    <script>
-    window.onload = function() {
-      // Begin Swagger UI call region
-      const ui = SwaggerUIBundle({
-        url: "{{ absolute_url(path('api_doc')) }}.json",
-        dom_id: '#swagger-ui',
-        deepLinking: true,
-        presets: [
-          SwaggerUIBundle.presets.apis,
-          SwaggerUIStandalonePreset
-        ],
-        plugins: [
-          SwaggerUIBundle.plugins.DownloadUrl
-        ],
-        layout: "StandaloneLayout",
-        validatorUrl: null
-      });
-      // End Swagger UI call region
-    };
-    </script>
-</body>
-</html>
+    {{ parent() }}
+{% endblock %}
