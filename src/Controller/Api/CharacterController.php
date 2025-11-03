@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\PlayerCharacter;
+use App\Service\RateLimitingService;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,8 +36,18 @@ class CharacterController extends AbstractController
     #[OA\Response(response: 200, description: 'Character leveled up successfully.')]
     #[OA\Response(response: 400, description: 'Invalid or already used victory token.')]
     #[Security(name: "Bearer")]
-    public function levelUp(#[CurrentUser] PlayerCharacter $character, Request $request, EntityManagerInterface $em): JsonResponse
+    public function levelUp(
+        #[CurrentUser] PlayerCharacter $character,
+        Request $request,
+        EntityManagerInterface $em,
+        RateLimitingService $rateLimiter
+    ): JsonResponse
     {
+        // Check rate limits with progressive penalties
+        if ($rateLimit = $rateLimiter->checkRateLimit($character)) {
+            return $this->json(['message' => $rateLimit['message']], $rateLimit['status']);
+        }
+
         $data = json_decode($request->getContent(), true);
         $token = $data['victoryToken'] ?? null;
 
@@ -56,8 +67,6 @@ class CharacterController extends AbstractController
         $character->setRedeemedTokens($redeemedTokens);
 
         $character->setLevel($character->getLevel() + 1);
-        $redeemedTokens[] = $token;
-        $character->setRedeemedTokens($redeemedTokens);
 
         $em->flush();
 

@@ -40,7 +40,7 @@ class CreateCharacterCommand extends Command
         $name = $input->getArgument('name');
         $class = $input->getArgument('class');
         
-        $validClasses = array_keys(CharacterStatsService::getClasses());
+        $validClasses = array_values(CharacterStatsService::getClasses());
         if (!in_array($class, $validClasses)) {
             $io->error('Invalid class provided. Valid classes are: ' . implode(', ', $validClasses));
             return Command::FAILURE;
@@ -49,6 +49,7 @@ class CreateCharacterCommand extends Command
         $character = new PlayerCharacter();
         $character->setCharacterName($name);
         $character->setCharacterClass($class);
+        $character->setEmail('test@glr.nl'); // Set a test email for CLI-created characters
         $character->setApiKey(bin2hex(random_bytes(30)));
         $character->setStats($this->statsService->generateStatsForClass($class));
 

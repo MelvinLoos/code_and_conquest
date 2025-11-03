@@ -67,6 +67,9 @@ class PlayerCharacter implements UserInterface, PasswordAuthenticatedUserInterfa
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $rateLimitViolations = null;
+
     public function __construct()
     {
         $this->level = 1;
@@ -200,7 +203,17 @@ class PlayerCharacter implements UserInterface, PasswordAuthenticatedUserInterfa
     public function setEmail(string $email): static
     {
         $this->email = $email;
+        return $this;
+    }
 
+    public function getRateLimitViolations(): ?int
+    {
+        return $this->rateLimitViolations;
+    }
+
+    public function setRateLimitViolations(?int $violations): self
+    {
+        $this->rateLimitViolations = $violations;
         return $this;
     }
 

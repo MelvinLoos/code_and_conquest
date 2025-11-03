@@ -1,13 +1,32 @@
 framework:
     rate_limiter:
-        # 10 requests per minute, per API key
-        api_endpoints:
-            policy: 'token_bucket'
-            limit: 10
-            rate: { interval: '1 minute' }
+        # Normal rate limit: 30 requests per minute
+        api_normal:
+            policy: 'sliding_window'
+            limit: 30
+            interval: '1 minute'
         
+        # Stricter limit after warnings: 10 requests per minute
+        api_restricted:
+            policy: 'sliding_window'
+            limit: 10
+            interval: '1 minute'
+            
+        # Very strict limit after multiple violations: 2 requests per minute
+        api_penalty:
+            policy: 'sliding_window'
+            limit: 2
+            interval: '1 minute'
+            
+        # Complete block: 1 request per hour (essentially blocked)
+        api_blocked:
+            policy: 'fixed_window'
+            limit: 1
+            interval: '1 hour'
+            
         # 5 registration attempts per hour, per IP address
         form_registration:
             policy: 'token_bucket'
             limit: 5
             rate: { interval: '1 hour' }
+
